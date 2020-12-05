@@ -14,11 +14,7 @@ import (
 //NewMongoClient returns a new mongoDB client.
 func NewMongoClient(ctx context.Context, cfg *config.Config) (*mongo.Client, context.Context) {
 
-	//https://docs.mongodb.com/manual/reference/connection-string/#connection-string-formats
-	//connStr := fmt.Sprintf("mongodb+srv://%s:%s@:%s/", cfg.DbUser, cfg.DbPassword, cfg.Port)
-	connStr := fmt.Sprintf("mongodb://%s:%s@mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/?replicaSet=rs", cfg.DbUser, cfg.DbPassword)
-	//connStr := fmt.Sprintf("mongodb://localhost:%s", cfg.DbPort)
-	//connStr := fmt.Sprintf("mongodb://%s:%s@localhost:27017,localhost:27018,localhost:27019/?replicaSet=rs", cfg.DbUser, cfg.DbPassword)
+	connStr := fmt.Sprintf("mongodb://%s:%s@localhost:27017,localhost:27018,localhost:27019/?replicaSet=rs0&readPreference=primary&ssl=false", cfg.DbUser, cfg.DbPassword)
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(connStr))
 	if err != nil {

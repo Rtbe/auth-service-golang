@@ -1,34 +1,33 @@
 #!/bin/bash
-#https://prashix.medium.com/setup-mongodb-replicaset-with-authentication-enabled-using-docker-compose-5edd2ad46a90
+
+sleep 30 
 
 mongo <<EOF
    var cfg = {
-        "_id": "rs",
+        "_id": "rs0",
         "version": 1,
         "members": [
             {
                 "_id": 0,
-                "host": "mongo-0.mongo:27017",
+                "host": "127.0.0.1:27017",
                 "priority": 2
             },
             {
                 "_id": 1,
-                "host": "mongo-1.mongo:27017",
+                "host": "127.0.0.1:27018",
                 "priority": 0
             },
             {
                 "_id": 2,
-                "host": "mongo-2.mongo:27017",
+                "host": "127.0.0.1:27019",
                 "priority": 0
             }
         ]
     };
     rs.initiate(cfg, { force: true });
-    //rs.reconfig(cfg, { force: true });
-    rs.status();
 EOF
 
-sleep 30 
+sleep 60 
 
 mongo <<EOF
    use admin;
@@ -41,4 +40,6 @@ mongo <<EOF
      });
      db.getSiblingDB("admin").auth("admin", "password");
      rs.status();
+     use testTask;
+     db.createCollection("tokens");
 EOF
