@@ -9,7 +9,7 @@
 
 Пример запроса:
 ```
-curl -X GET http://localhost:8080/auth/user/...
+curl -X GET https://auth-service-golang.herokuapp.com/auth/user/...
 ```
 **Где ... - id пользователя.**
 
@@ -17,7 +17,7 @@ curl -X GET http://localhost:8080/auth/user/...
 
 Пример запроса:
 ```
-curl -X POST -d '{"access_token":"...","refresh_token":"..."}' http://localhost:8080/auth/tokens/refresh
+curl -X POST -d '{"access_token":"...","refresh_token":"..."}' https://auth-service-golang.herokuapp.com/auth/tokens/refresh
 ```
 
 **Где ... - access и refresh токены.**
@@ -26,13 +26,13 @@ curl -X POST -d '{"access_token":"...","refresh_token":"..."}' http://localhost:
 
 Пример запроса:
 ```
-curl -X DELETE -d '{"refresh_token":"..."}' http://localhost:8080/auth/refresh
+curl -X DELETE -d '{"refresh_token":"..."}' https://auth-service-golang.herokuapp.com/auth/refresh
 ```
 **Где ... - полученный ранее refresh токен.**
 
 4) Метод: GET, Путь: /user/refresh- Удаление всех refresh токенов из базы данных для конкретного пользователя. Id пользователя передается в теле запроса.
 Пример запроса:
 ```
-curl -X DELETE -d '{"user_id":"..."}' http://localhost:8080/auth/user/refresh
+curl -X DELETE -d '{"user_id":"..."}' https://auth-service-golang.herokuapp.com/auth/user/refresh
 ```
 **Где ... - id пользователя.**
