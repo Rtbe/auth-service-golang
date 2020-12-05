@@ -31,6 +31,10 @@ func run() error {
 
 	handler := handler.New(ctx, router)
 	handler.InitAuthRoutes(tokenMongoRepo)
+	//Placeholder for main app page to replace default heroku`s one.
+	handler.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("App is running"))
+	})
 
 	s := http.Server{
 		Addr:         ":" + cfg.Port,

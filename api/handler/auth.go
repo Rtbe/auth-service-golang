@@ -62,18 +62,18 @@ func refreshTokens(ctx context.Context, repo repository.Token) http.HandlerFunc 
 		}
 		refreshToken, err := entity.DecodeToken64(tokens.RefreshToken)
 		if err != nil {
-			respondWithError(fmt.Sprintf("Error decoding refresh token: %s", refreshToken), http.StatusInternalServerError, w)
+			respondWithError(fmt.Sprintf("Error decoding refresh token %s", tokens.RefreshToken), http.StatusInternalServerError, w)
 			return
 		}
 
 		claimsRefreshToken, err := entity.ParseRefreshToken(refreshToken)
 		if err != nil {
-			respondWithError(fmt.Sprintf("Error parsing refresh token: %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
+			respondWithError(fmt.Sprintf("Error parsing refresh token %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
 			return
 		}
 		claimsAccessToken, err := entity.ParseAccessToken(tokens.AccessToken)
 		if err != nil {
-			respondWithError(fmt.Sprintf("Error parsing refresh token: %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
+			respondWithError(fmt.Sprintf("Error parsing refresh token %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
 			return
 		}
 		//Check bind between access and refresh token.
@@ -126,7 +126,7 @@ func deleteRefreshToken(ctx context.Context, repo repository.Token) http.Handler
 		}
 		refreshToken, err := entity.DecodeToken64(requestRefreshToken.Token)
 		if err != nil {
-			respondWithError(fmt.Sprintf("Error decoding refresh token: %s", refreshToken), http.StatusInternalServerError, w)
+			respondWithError(fmt.Sprintf("Error decoding refresh token %s", requestRefreshToken.Token), http.StatusInternalServerError, w)
 			return
 		}
 		claimsRefreshToken, err := entity.ParseRefreshToken(refreshToken)
