@@ -60,6 +60,15 @@ func refreshTokens(ctx context.Context, repo repository.Token) http.HandlerFunc 
 			respondWithError("Error parsing pair of tokens", http.StatusBadRequest, w)
 			return
 		}
+		if tokens.AccessToken == "" {
+			respondWithError("Access token is empty", http.StatusBadRequest, w)
+			return
+		}
+		if tokens.RefreshToken == "" {
+			respondWithError("Refresh token is empty", http.StatusBadRequest, w)
+			return
+		}
+
 		refreshToken, err := entity.DecodeToken64(tokens.RefreshToken)
 		if err != nil {
 			respondWithError(fmt.Sprintf("Error decoding refresh token %s", tokens.RefreshToken), http.StatusInternalServerError, w)
@@ -124,6 +133,11 @@ func deleteRefreshToken(ctx context.Context, repo repository.Token) http.Handler
 			respondWithError("Error parsing refresh token", http.StatusBadRequest, w)
 			return
 		}
+		if requestRefreshToken.Token == "" {
+			respondWithError("Refresh token is empty", http.StatusBadRequest, w)
+			return
+		}
+
 		refreshToken, err := entity.DecodeToken64(requestRefreshToken.Token)
 		if err != nil {
 			respondWithError(fmt.Sprintf("Error decoding refresh token %s", requestRefreshToken.Token), http.StatusInternalServerError, w)
@@ -165,9 +179,14 @@ func deleteUserRefreshTokens(ctx context.Context, repo repository.Token) http.Ha
 		u := &model.User{}
 		err := json.NewDecoder(r.Body).Decode(u)
 		if err != nil {
-			respondWithError("Error parsing user", http.StatusBadRequest, w)
+			respondWithError("Error parsing user id", http.StatusBadRequest, w)
 			return
 		}
+		if u.UserID == "" {
+			respondWithError("User id is empty", http.StatusBadRequest, w)
+			return
+		}
+
 		isUserInDB := repo.IsUserInDB(ctx, u.UserID)
 		if !isUserInDB {
 			respondWithError("There is no such user", http.StatusNotFound, w)
