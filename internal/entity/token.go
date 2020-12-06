@@ -30,8 +30,8 @@ type RefreshToken struct {
 
 //TokenPair is an representation of access and refresh token pair.
 type TokenPair struct {
-	AccessToken  AccessToken  `bson:"access_token"`
-	RefreshToken RefreshToken `bson:"refresh_token"`
+	AccessToken  AccessToken
+	RefreshToken RefreshToken
 }
 
 //CustomClaimsAcessToken is a set of additional claims for jwt access token.
@@ -69,7 +69,7 @@ func CreateTokenPair(userID string) (*TokenPair, error) {
 	tokens := &TokenPair{
 		AccessToken: AccessToken{
 			Token:     accessToken,
-			ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
+			ExpiresAt: accessTokenExp,
 		},
 		RefreshToken: RefreshToken{
 			UserID:    userID,
@@ -82,7 +82,7 @@ func CreateTokenPair(userID string) (*TokenPair, error) {
 	return tokens, nil
 }
 
-//createAccessToken creates a new refresh token.
+//createAccessToken creates a new jwt refresh token.
 func createAccessToken(userID string, refreshUUID string, expires int64) (string, error) {
 	claims := CustomClaimsAcessToken{
 		User_id:      userID,
@@ -100,7 +100,7 @@ func createAccessToken(userID string, refreshUUID string, expires int64) (string
 	return signedToken, nil
 }
 
-//createRefreshToken creates a new refresh token.
+//createRefreshToken creates a new jwt refresh token.
 func createRefreshToken(userID, UUID string, expires int64) (string, error) {
 	claims := CustomClaimsRefreshToken{
 		User_id: userID,
@@ -123,7 +123,7 @@ func ParseRefreshToken(tokenString string) (*CustomClaimsRefreshToken, error) {
 	claims := &CustomClaimsRefreshToken{}
 	token, err := ParseJWTToken(tokenString, claims)
 	if err != nil {
-		return nil, fmt.Errorf("Refresh token is not valid: %s", err.Error())
+		return nil, fmt.Errorf("Refresh token is not valid. %s", err.Error())
 	}
 
 	claims, ok := token.Claims.(*CustomClaimsRefreshToken)
@@ -140,6 +140,9 @@ func ParseRefreshToken(tokenString string) (*CustomClaimsRefreshToken, error) {
 func ParseAccessToken(tokenString string) (*CustomClaimsAcessToken, error) {
 	claims := &CustomClaimsAcessToken{}
 	token, err := ParseJWTToken(tokenString, claims)
+	if err != nil {
+		return nil, fmt.Errorf("Access token is not valid. %s", err.Error())
+	}
 
 	claims, ok := token.Claims.(*CustomClaimsAcessToken)
 	if err != nil {
