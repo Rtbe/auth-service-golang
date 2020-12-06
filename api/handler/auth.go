@@ -26,7 +26,7 @@ func get(ctx context.Context, repo repository.Token) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "userID")
 		if id == "" {
-			respondWithError("Error parsing user id from request url", http.StatusBadRequest, w)
+			respondWithError("User id is empty", http.StatusBadRequest, w)
 			return
 		}
 
@@ -82,7 +82,7 @@ func refreshTokens(ctx context.Context, repo repository.Token) http.HandlerFunc 
 		}
 		claimsAccessToken, err := entity.ParseAccessToken(tokens.AccessToken)
 		if err != nil {
-			respondWithError(fmt.Sprintf("Error parsing refresh token %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
+			respondWithError(fmt.Sprintf("Error parsing access token %s. %s", refreshToken, err.Error()), http.StatusInternalServerError, w)
 			return
 		}
 		//Check bind between access and refresh token.
@@ -127,7 +127,6 @@ func refreshTokens(ctx context.Context, repo repository.Token) http.HandlerFunc 
 func deleteRefreshToken(ctx context.Context, repo repository.Token) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestRefreshToken := model.RefreshToken{}
-
 		err := json.NewDecoder(r.Body).Decode(&requestRefreshToken)
 		if err != nil {
 			respondWithError("Error parsing refresh token", http.StatusBadRequest, w)
@@ -175,7 +174,6 @@ func deleteRefreshToken(ctx context.Context, repo repository.Token) http.Handler
 
 func deleteUserRefreshTokens(ctx context.Context, repo repository.Token) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		u := &model.User{}
 		err := json.NewDecoder(r.Body).Decode(u)
 		if err != nil {
