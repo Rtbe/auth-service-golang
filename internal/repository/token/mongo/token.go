@@ -28,7 +28,7 @@ func NewTokenRepository(cl *mongo.Client, coll string) *TokenRepository {
 //Insert inserts pair of tokens into mongoDB.
 func (t *TokenRepository) Insert(ctx context.Context, tokenPair *entity.TokenPair) error {
 	cfg := config.New()
-	log.Printf("Inserting tokens into mongoDB. Database name: %s, Collection: %s\n", cfg.DbName, t.collection)
+	log.Printf("Inserting tokens into mongoDB. Database name: %s, Collection: %s", cfg.DbName, t.collection)
 
 	//Convert refresh token into bcrypt hash before inserting it in mongoDB.
 	refreshTokenHash, err := entity.GenerateHash(tokenPair.RefreshToken.Token)
@@ -69,7 +69,7 @@ func (t *TokenRepository) Insert(ctx context.Context, tokenPair *entity.TokenPai
 //DeleteRefreshToken deletes particular refresh token from mongoDB.
 func (t *TokenRepository) DeleteRefreshToken(ctx context.Context, userID, refreshTokenUUID string) error {
 	cfg := config.New()
-	log.Printf("Deleting refresh token: %s from MongoDB. Database name: %s, Collection: %s.", refreshTokenUUID, cfg.DbName, t.collection)
+	log.Printf("Deleting refresh token: %s from MongoDB. Database name: %s, Collection: %s", refreshTokenUUID, cfg.DbName, t.collection)
 
 	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
 		filter := bson.M{"_id": refreshTokenUUID, "user_id": userID}
@@ -99,7 +99,7 @@ func (t *TokenRepository) DeleteRefreshToken(ctx context.Context, userID, refres
 //RefreshTokenSetIsUsed sets field used to true for particular refresh token.
 func (t *TokenRepository) RefreshTokenSetIsUsed(ctx context.Context, refreshTokenUUID string) error {
 	cfg := config.New()
-	log.Printf("Updating refresh token: %s in MongoDB. Database name: %s, Collection: %s.", refreshTokenUUID, cfg.DbName, t.collection)
+	log.Printf("Updating refresh token: %s in MongoDB. Database name: %s, Collection: %s", refreshTokenUUID, cfg.DbName, t.collection)
 
 	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
 		refreshTokenFilter := bson.M{"_id": refreshTokenUUID}
@@ -158,7 +158,7 @@ func (t *TokenRepository) DeleteUserRefreshTokens(ctx context.Context, userID st
 	}
 
 	deletedCount := int(result.(*mongo.DeleteResult).DeletedCount)
-	log.Printf("%v records was deleted from mongoDB.\n", deletedCount)
+	log.Printf("%v records was deleted from mongoDB", deletedCount)
 	return nil
 }
 
@@ -201,10 +201,10 @@ func (t *TokenRepository) IsRefreshTokenInDB(ctx context.Context, refreshTokenUU
 		return false
 	}
 	cfg := config.New()
-	log.Printf("Searching refresh token with id=%v in MongoDB. Database name: %s, Collection: %s.", refreshTokenUUID, cfg.DbName, t.collection)
+	log.Printf("Searching refresh token with id=%v in MongoDB. Database name: %s, Collection: %s", refreshTokenUUID, cfg.DbName, t.collection)
 
 	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
-		//This filter makes it seems like only unused refreshTokens are in mongoDB.
+		//This filter makes it seems like only unused refresh tokens are in mongoDB.
 		filter := bson.M{"_id": refreshTokenUUID, "used": false}
 		result := t.cl.Database(cfg.DbName).Collection(t.collection).FindOne(sessCtx, filter)
 		//Check in case of no documents was found.
